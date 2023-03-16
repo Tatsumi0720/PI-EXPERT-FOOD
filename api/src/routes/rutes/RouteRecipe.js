@@ -5,7 +5,7 @@ const { getAllFood } = require("../controllers/ControllerRecipe");
 const router = Router();
 
 router.get('/', async (req, res) => {
-    const { name } = req.params
+    const { name } = req.query
 
     try {
         let recipesAll = await getAllFood();
