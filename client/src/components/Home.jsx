@@ -1,4 +1,5 @@
 import React from "react";
+import styles from './Home.module.css'
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -11,14 +12,13 @@ export default function Home() {
     const dispatch = useDispatch();
     const allRecipes = useSelector((state) => state.recipes);
 
-    const[search,setSearch] =useState('')                                           
-    const[orden,setOrden] =useState('')                                                   
-    const[order,setOrder] =useState('')                                                   
-    const[currentPage,setCurrentPage] =useState(1)                                         
-    const[recipesPerPage,setrecipesPerPage]=useState(9)                            
-    const indexLastRecipe = currentPage * recipesPerPage                           
-    const indexFirstRecipe = indexLastRecipe - recipesPerPage                       
-    const currentRecipes = allRecipes.slice(indexFirstRecipe,indexLastRecipe)
+    const [orden, setOrden] = useState('')
+    const [order, setOrder] = useState('')
+    const [currentPage, setCurrentPage] = useState(1)
+    const [recipesPerPage, setrecipesPerPage] = useState(9)
+    const indexLastRecipe = currentPage * recipesPerPage
+    const indexFirstRecipe = indexLastRecipe - recipesPerPage
+    const currentRecipes = allRecipes.slice(indexFirstRecipe, indexLastRecipe)
 
     const paginado = (pageNumber) => {
         setCurrentPage(pageNumber)
@@ -26,25 +26,25 @@ export default function Home() {
 
     useEffect(() => {
         dispatch(getRecipes());
-    },[dispatch]);
+    }, [dispatch]);
 
     function handleClick(e) {
         e.preventDefault();
         dispatch(getRecipes());
     }
 
-    function handleFilterTypeDiet (e) {
+    function handleFilterTypeDiet(e) {
         dispatch(filterRecipesByTypeDiet(e.target.value))
     }
 
-    function handleSort (e){
+    function handleSort(e) {
         e.preventDefault();
         dispatch(orderByName(e.target.value))
         setCurrentPage(1);
         setOrden(`ordenado ${e.target.value}`)
     }
 
-    function handlePuntuation (e) {
+    function handlePuntuation(e) {
         e.preventDefault();
         dispatch(orderByPuntuation(e.target.value))
         setCurrentPage(1);
@@ -52,24 +52,26 @@ export default function Home() {
     }
 
     return (
-        <div>
-            <Link to="/recipes">Crear Recipe</Link>
+        <div className={styles.bkg}>
+            <div className={styles.create}>
+                <Link to="/recipes">Crear Recipe</Link>
+            </div>
             <h1>FOOD</h1>
-            <button onClick={(e) => {handleClick(e);}}>
+            <button onClick={(e) => { handleClick(e); }} className={styles.refresh}>
                 Volver a cargar todas las recipes
             </button>
             <div>
-                <select onChange={e => handleSort(e)}>
+                <select className={styles.select} onChange={e => handleSort(e)}>
                     <option value="asc">Ascendent(A-Z)</option>
                     <option value="des">Descendent(Z-A)</option>
                 </select>
 
-                <select  onChange={e => handlePuntuation(e)}>
+                <select className={styles.select} onChange={e => handlePuntuation(e)}>
                     <option value="mayormenor">Mayor a menor por puntuacion</option>
                     <option value="menormayor">Menor a mayor por puntuacion</option>
                 </select>
 
-                <select onChange={e => handleFilterTypeDiet(e)}>
+                <select className={styles.select} onChange={e => handleFilterTypeDiet(e)}>
                     <option value="All">All recipes</option>
                     <option value="gluten free">Gluten Free</option>
                     <option value="ketogenic">Ketogenic</option>
@@ -83,25 +85,29 @@ export default function Home() {
                     <option value="whole 30">Whole 30</option>
                 </select>
             </div>
-            
-            <div>
-            <Paginado 
-            recipesPerPage={recipesPerPage}
-            allRecipes={allRecipes.length}
-            paginado={paginado}
-            />
+
+            <div className={styles.paginado}>
+                <Paginado
+                    recipesPerPage={recipesPerPage}
+                    allRecipes={allRecipes.length}
+                    paginado={paginado}
+                />
             </div>
 
-            <SearchBar/>
-            
-            {currentRecipes?.map((e) => {
+            <div className={styles.btnsearch}>
+                <SearchBar />
+            </div>
+
+            <div className={styles.cards}>            
+                {currentRecipes?.map((e) => {
                 console.log(allRecipes);
                 return (
-                    <Link to={'/recipes/'+ e.id}>
+                    <Link to={'/recipes/' + e.id}>
                         <Card name={e.name} image={e.image} typeDiets={e.typeDiets} key={e.id} />
                     </Link>
                 )
             })}
+            </div>
         </div>
     );
 }
